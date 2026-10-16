@@ -2,23 +2,17 @@ import SwiftUI
 
 @main
 struct MoviesApp: App {
-    private let dependencies = AppDependencies.live
+    @UIApplicationDelegateAdaptor var delegate: AppDelegate
 
     var body: some Scene {
         WindowGroup {
-            RootView(dependencies: dependencies)
+            RootView()
         }
     }
 }
 
 struct RootView: View {
-    private let dependencies: AppDependencies
-
-    init(dependencies: AppDependencies) {
-        self.dependencies = dependencies
-    }
-
     var body: some View {
-        MovieList(movieRepository: dependencies.movieRepository)
+        MovieList()
     }
 }

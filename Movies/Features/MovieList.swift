@@ -3,9 +3,9 @@ import SwiftUI
 struct MovieList: View {
     @State private var viewModel: ViewModel
 
-    init(movieRepository: any MovieRepository) {
+    init() {
         _viewModel = State(
-            initialValue: ViewModel(movieRepository: movieRepository)
+            initialValue: ViewModel(movieRepository: inject())
         )
     }
 
