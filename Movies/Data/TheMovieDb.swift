@@ -8,9 +8,9 @@ struct TheMovieDb {
     private let authTokenProvider: TheMovieDbApi.AuthTokenProvider
     private let apiClient: TheMovieDbApi.Client
 
-    init(authTokenProvider: TheMovieDbApi.AuthTokenProvider, urlSession: URLSession) {
+    init(authTokenProvider: TheMovieDbApi.AuthTokenProvider, network: Network) {
         self.authTokenProvider = authTokenProvider
-        self.apiClient = TheMovieDbApi.Client(urlSession: urlSession)
+        self.apiClient = TheMovieDbApi.Client(network: network)
     }
 
     private func callApi<T: Decodable>(endpoint: TheMovieDbApi.Endpoint) async throws -> T {

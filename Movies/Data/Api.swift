@@ -61,10 +61,10 @@ extension TheMovieDbApi {
             return decoder
         }()
 
-        private let urlSession: URLSession
+        private let network: Network
 
-        init(urlSession: URLSession) {
-            self.urlSession = urlSession
+        init(network: Network) {
+            self.network = network
         }
 
         func request<T: Decodable>(endpoint: Endpoint, authTokenProvider: AuthTokenProvider) async throws(ApiError) -> T {
@@ -78,7 +78,7 @@ extension TheMovieDbApi {
                 .build()
 
             do {
-                let (data, response) = try await urlSession.data(for: request)
+                let (data, response) = try await network.data(for: request)
                 try handleResponse(response, data: data)
                 do {
                     return try jsonDecoder.decode(T.self, from: data)

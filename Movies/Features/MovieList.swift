@@ -1,19 +1,15 @@
 import SwiftUI
 
 struct MovieList: View {
-    @State private var viewModel: ViewModel
-
-    init() {
-        _viewModel = State(
-            initialValue: ViewModel(movieRepository: inject())
-        )
-    }
+    @State private var viewModel: ViewModel = .init()
 
     var body: some View {
-        Text(viewModel.movies)
-            .task {
-                await viewModel.fetchMovies()
-            }
+        List(viewModel.movies) { movie in
+            Text(movie.title)
+        }
+        .task {
+            await viewModel.fetchMovies()
+        }
     }
 }
 
@@ -23,14 +19,27 @@ extension MovieList {
     final class ViewModel {
         private let movieRepository: any MovieRepository
 
-        private(set) var movies = ""
+        private(set) var movies: [Movie] = []
+
+        convenience init() {
+            self.init(movieRepository: inject())
+        }
 
         init(movieRepository: any MovieRepository) {
             self.movieRepository = movieRepository
         }
 
         func fetchMovies() async {
-            self.movies = "Movies Fetched"
+            do {
+                let page = try await movieRepository.fetchNowPlayingMovies()
+                self.movies = page.results
+            } catch {
+                self.movies = []
+            }
         }
     }
+}
+
+#Preview {
+    MovieList()
 }

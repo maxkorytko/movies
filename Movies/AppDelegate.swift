@@ -11,8 +11,9 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     }
 
     private func setupDependencies() {
+        DI.container.bind(Network.self, SimulatedSlowNetwork(network: URLSession.shared))
         DI.container.bindLazy(MovieRepository.self) {
-            TheMovieDb(authTokenProvider: .dev, urlSession: .shared)
+            TheMovieDb(authTokenProvider: .dev, network: inject())
         }
     }
 }

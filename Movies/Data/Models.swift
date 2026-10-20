@@ -5,7 +5,7 @@ struct Page<T: Decodable>: Decodable {
     let totalResults: Int
 }
 
-struct Movie: Decodable {
+struct Movie: Decodable, Identifiable {
     let id: Int
     let title: String
 }
