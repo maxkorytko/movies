@@ -1,7 +1,9 @@
 import Foundation
 
-enum HttpMethod {
+enum HttpMethod: CustomStringConvertible {
     case get
+
+    var description: String { rawValue }
 
     var rawValue: String {
         switch self {
@@ -78,6 +80,8 @@ extension TheMovieDbApi {
                 .build()
 
             do {
+                log(request)
+
                 let (data, response) = try await network.data(for: request)
                 try handleResponse(response, data: data)
                 do {
@@ -86,6 +90,7 @@ extension TheMovieDbApi {
                     throw ApiError.decodingFailed(underlying: error)
                 }
             } catch {
+                log(request, .error, message: "\(error)")
                 if let apiError = error as? ApiError { throw apiError }
                 throw ApiError.requestFailed(underlying: error)
             }

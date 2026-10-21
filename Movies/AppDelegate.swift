@@ -1,3 +1,4 @@
+import OSLog
 import UIKit
 
 final class AppDelegate: NSObject, UIApplicationDelegate {
@@ -11,7 +12,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     }
 
     private func setupDependencies() {
+        DI.container.bindLazy(Logger.self) {
+            Logger(subsystem: Bundle.main.bundleIdentifier!, category: "app")
+        }
+
         DI.container.bind(Network.self, SimulatedSlowNetwork(network: URLSession.shared))
+
         DI.container.bindLazy(MovieRepository.self) {
             TheMovieDb(authTokenProvider: .dev, network: inject())
         }
