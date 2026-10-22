@@ -4,12 +4,32 @@ struct MovieList: View {
     @State private var viewModel: ViewModel = .init()
 
     var body: some View {
-        List(viewModel.movies) { movie in
+        switch viewModel.content {
+        case .loading:
+            loadingView
+        case .success(let content):
+            contentView(content)
+        case .failure:
+            errorView
+        }
+    }
+
+    private var loadingView: some View {
+        Text("Loading")
+            .task {
+                await viewModel.fetchInitialContent()
+            }
+    }
+
+    private func contentView(_ content: [Movie]) -> some View {
+        List(content) { movie in
             Text(movie.title)
         }
-        .task {
-            await viewModel.fetchMovies()
-        }
+
+    }
+
+    private var errorView: some View {
+        Text("Error")
     }
 }
 
@@ -19,7 +39,7 @@ extension MovieList {
     final class ViewModel {
         private let movieRepository: any MovieRepository
 
-        private(set) var movies: [Movie] = []
+        private(set) var content: Loadable<[Movie]> = .loading
 
         convenience init() {
             self.init(movieRepository: inject())
@@ -29,14 +49,27 @@ extension MovieList {
             self.movieRepository = movieRepository
         }
 
-        func fetchMovies() async {
+        func fetchInitialContent() async {
             do {
                 let page = try await movieRepository.fetchNowPlayingMovies()
-                self.movies = page.results
+                self.content = .success(page.results)
             } catch {
-                self.movies = []
+                self.content = .failure(error)
             }
         }
+    }
+}
+
+enum Loadable<T> {
+    case loading
+    case success(T)
+    case failure(Error)
+
+    var result: T? {
+        if case .success(let result) = self {
+            return result
+        }
+        return nil
     }
 }
 
