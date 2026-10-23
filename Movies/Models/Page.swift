@@ -4,8 +4,3 @@ struct Page<T: Decodable>: Decodable {
     let totalPages: Int
     let totalResults: Int
 }
-
-struct Movie: Decodable, Identifiable {
-    let id: Int
-    let title: String
-}
