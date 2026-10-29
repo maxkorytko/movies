@@ -30,6 +30,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		7B7D31A9308BB6820077F6FA /* Preview Content */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 		7B9A7C8E305B6564008C84B7 /* Movies */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Movies;
@@ -78,6 +83,7 @@
 				7B9A7C8E305B6564008C84B7 /* Movies */,
 				7B9A7C9C305B6565008C84B7 /* MoviesTests */,
 				7B9A7CA6305B6565008C84B7 /* MoviesUITests */,
+				7B7D31A9308BB6820077F6FA /* Preview Content */,
 				7B9A7C8D305B6564008C84B7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,6 +114,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				7B7D31A9308BB6820077F6FA /* Preview Content */,
 				7B9A7C8E305B6564008C84B7 /* Movies */,
 			);
 			name = Movies;
@@ -397,6 +404,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "Preview\\ Content";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -428,6 +436,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "Preview\\ Content";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

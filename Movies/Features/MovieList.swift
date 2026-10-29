@@ -25,7 +25,6 @@ struct MovieList: View {
         List(content) { movie in
             Text(movie.title)
         }
-
     }
 
     private var errorView: some View {

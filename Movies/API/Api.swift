@@ -17,20 +17,6 @@ enum TheMovieDbApi {
         case v3 = "3"
     }
 
-    struct Endpoint {
-        let apiVersion: Version
-        let httpMethod: HttpMethod
-        let path: String
-
-        init(apiVersion: Version, httpMethod: HttpMethod, path: String) {
-            self.httpMethod = httpMethod
-            self.path = path
-            self.apiVersion = apiVersion
-        }
-    }
-}
-
-extension TheMovieDbApi {
     enum ApiError: Error {
         case decodingFailed(underlying: Error)
         case httpError(statusCode: Int, data: Data?)
