@@ -23,7 +23,7 @@ struct MovieList: View {
 
     private func contentView(_ content: [Movie]) -> some View {
         List(content) { movie in
-            Text(movie.title)
+            MovieTile(movie: movie)
         }
     }
 
@@ -36,6 +36,7 @@ extension MovieList {
     @MainActor
     @Observable
     final class ViewModel {
+        private let appState: AppState = inject()
         private let movieRepository: any MovieRepository
 
         private(set) var content: Loadable<[Movie]> = .loading
@@ -56,19 +57,6 @@ extension MovieList {
                 self.content = .failure(error)
             }
         }
-    }
-}
-
-enum Loadable<T> {
-    case loading
-    case success(T)
-    case failure(Error)
-
-    var result: T? {
-        if case .success(let result) = self {
-            return result
-        }
-        return nil
     }
 }
 
