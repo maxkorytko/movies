@@ -7,51 +7,63 @@ final class DIContainer {
         case typeNotBound(String)
     }
 
-    private var bindings: [String: Any] = [:]
+    private typealias KeyType = ObjectIdentifier
 
-    private static func key<T>(from type: T.Type) -> String {
-        String(reflecting: type.self)
+    private var bindings: [ObjectIdentifier: Any] = [:]
+    private let lock: NSLock = .init()
+
+    func clear() {
+        lock.withLock { bindings = [:] }
     }
 
     func bind<T>(_ type: T.Type, _ value: T) {
-        bindings[Self.key(from: type)] = value
+        setBinding(Self.key(from: type), value: value)
     }
 
     func bindLazy<T>(_ type: T.Type, _ value: @escaping () -> T) {
-        bindings[Self.key(from: type)] = LazyValueProvider(value)
+        setBinding(Self.key(from: type), value: LazyValueProvider(value))
     }
 
     func resolve<T>(_ type: T.Type) throws -> T {
         try resolve(type, key: Self.key(from: type))
     }
 
-    private func resolve<T>(_ type: T.Type, key: String) throws -> T {
-        if let value = bindings[key] as? T {
+    private func resolve<T>(_ type: T.Type, key: KeyType) throws -> T {
+        if let value: T = binding(key) {
             return value
         }
 
-        if let valueProvider = bindings[key] as? LazyValueProvider<T> {
+        if let valueProvider: LazyValueProvider<T> = binding(key) {
             return valueProvider()
         }
 
         throw Error.typeNotBound("\(T.self)")
     }
 
-    func clear() {
-        bindings = [:]
+    private func binding<T>(_ key: KeyType) -> T? {
+        lock.withLock { bindings[key] as? T }
+    }
+
+    private func setBinding<T>(_ key: KeyType, value: T) {
+        lock.withLock { bindings[key] = value }
+    }
+
+    private static func key<T>(from type: T.Type) -> KeyType {
+        ObjectIdentifier(type)
     }
 }
 
 private final class LazyValueProvider<T> {
-    let makeValue: () -> T
     lazy var value: T = makeValue()
+    private let makeValue: () -> T
+    private let lock: NSLock = .init()
 
     init(_ makeValue: @escaping () -> T) {
         self.makeValue = makeValue
     }
 
     func callAsFunction() -> T {
-        value
+        lock.withLock { value }
     }
 }
 
@@ -69,15 +81,5 @@ enum DI {
         } set {
             _container = newValue
         }
-    }
-}
-
-// MARK: - Utilities
-
-func inject<T>(_ type: T.Type = T.self) -> T {
-    do {
-        return try DI.container.resolve(type)
-    } catch {
-        fatalError(error.localizedDescription)
     }
 }

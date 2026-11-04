@@ -3,7 +3,8 @@ import SwiftUI
 struct TheMovieDbImage: View {
     let path: String
 
-    private let appState: AppState = inject()
+    @Inject
+    private var appState: AppState
 
     var body: some View {
         AsyncImage(url: imageURL) { image in

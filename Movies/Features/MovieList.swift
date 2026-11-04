@@ -36,7 +36,6 @@ extension MovieList {
     @MainActor
     @Observable
     final class ViewModel {
-        private let appState: AppState = inject()
         private let movieRepository: any MovieRepository
 
         private(set) var content: Loadable<[Movie]> = .loading
