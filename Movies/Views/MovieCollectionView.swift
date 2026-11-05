@@ -1,21 +1,26 @@
 import SwiftUI
 
-struct MovieList: View {
+struct MovieCollectionView: View, Themeable {
     @State private var viewModel: ViewModel = .init()
 
     var body: some View {
-        switch viewModel.content {
-        case .loading:
-            loadingView
-        case .success(let content):
-            contentView(content)
-        case .failure:
-            errorView
+        ZStack {
+            theme.colors.background
+
+            switch viewModel.content {
+            case .loading:
+                loadingView
+            case .success(let content):
+                contentView(content)
+            case .failure:
+                errorView
+            }
         }
     }
 
     private var loadingView: some View {
         Text("Loading")
+            .foregroundStyle(theme.colors.textForeground)
             .task {
                 await viewModel.fetchInitialContent()
             }
@@ -32,7 +37,7 @@ struct MovieList: View {
     }
 }
 
-extension MovieList {
+extension MovieCollectionView {
     @MainActor
     @Observable
     final class ViewModel {
@@ -60,5 +65,5 @@ extension MovieList {
 }
 
 #Preview {
-    MovieList()
+    MovieCollectionView()
 }

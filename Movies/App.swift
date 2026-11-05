@@ -13,6 +13,6 @@ struct MoviesApp: App {
 
 struct RootView: View {
     var body: some View {
-        MovieList()
+        MovieCollectionView()
     }
 }
