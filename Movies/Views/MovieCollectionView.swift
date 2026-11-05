@@ -6,6 +6,7 @@ struct MovieCollectionView: View, Themeable {
     var body: some View {
         ZStack {
             theme.colors.background
+                .ignoresSafeArea()
 
             switch viewModel.content {
             case .loading:
@@ -29,7 +30,9 @@ struct MovieCollectionView: View, Themeable {
     private func contentView(_ content: [Movie]) -> some View {
         List(content) { movie in
             MovieTile(movie: movie)
+                .listRowBackground(Color.clear)
         }
+        .scrollContentBackground(.hidden)
     }
 
     private var errorView: some View {
