@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MovieTile: View, Themeable {
+struct MovieTile: View {
     let movie: Movie
 
     var body: some View {
@@ -8,7 +8,7 @@ struct MovieTile: View, Themeable {
             TheMovieDbImage(path: movie.posterPath)
 
             Text(movie.title)
-                .foregroundStyle(theme.colors.textForeground)
+                .foregroundStyle(Color.ds_textForeground)
                 .font(.subheadline)
         }
     }

@@ -1,19 +1,21 @@
 import SwiftUI
 
-protocol AppTheme {
-    var colors: AppThemeColors { get }
-}
+struct AppTheme {
+    let colors: DesignSystem.Colors
+    let spacing: DesignSystem.Spacing
 
-struct AppThemeColors {
-    let background: Color
-    let textForeground: Color
+    init(
+        colors: DesignSystem.Colors,
+        spacing: DesignSystem.Spacing
+    ) {
+        self.colors = colors
+        self.spacing = spacing
+    }
 
-    static fileprivate let dark: Self = Self(
-       background: Color(hex: "#1F1F29"),
-       textForeground: Color(hex: "#FFFFFF")
-    )
-}
-
-struct DarkTheme: AppTheme {
-    let colors: AppThemeColors = .dark
+    static func dark() -> Self {
+        Self(
+            colors: DesignSystem.darkThemeColors,
+            spacing: DesignSystem.defaultSpacing
+        )
+    }
 }
