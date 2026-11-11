@@ -3,19 +3,15 @@ import SwiftUI
 struct AppTheme {
     let colors: DesignSystem.Colors
     let spacing: DesignSystem.Spacing
+    let typography: DesignSystem.Typography
 
     init(
-        colors: DesignSystem.Colors,
-        spacing: DesignSystem.Spacing
+        colors: DesignSystem.Colors = DesignSystem.defaultColors,
+        spacing: DesignSystem.Spacing = DesignSystem.defaultSpacing,
+        typography: DesignSystem.Typography = DesignSystem.defaultTypography
     ) {
         self.colors = colors
         self.spacing = spacing
-    }
-
-    static func dark() -> Self {
-        Self(
-            colors: DesignSystem.darkThemeColors,
-            spacing: DesignSystem.defaultSpacing
-        )
+        self.typography = typography
     }
 }

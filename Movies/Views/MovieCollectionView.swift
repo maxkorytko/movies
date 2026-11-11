@@ -59,6 +59,7 @@ fileprivate struct MovieGridView: View {
                         MovieTile(movie: movie)
                     }
                 }
+                .padding()
             }
         }
     }

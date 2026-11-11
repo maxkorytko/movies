@@ -1,6 +1,12 @@
 import SwiftUI
 
 struct TheMovieDbImage: View {
+    private enum Constants {
+        static let aspectRatio: CGFloat = 2.0 / 3.0
+        static let cornerRadius: CGFloat = 10
+    }
+
+    let imageKind: TheMovieDbImages.ImageKind
     let path: String
 
     @Environment(\.displayScale)
@@ -17,9 +23,10 @@ struct TheMovieDbImage: View {
                 .resizable()
                 .scaledToFit()
         } placeholder: {
-            Rectangle().fill(Color.blue)
+            Rectangle().fill(Color.ds_grey)
         }
-        .aspectRatio(2.0 / 3.0, contentMode: .fit)
+        .aspectRatio(Constants.aspectRatio, contentMode: .fit)
+        .clipShape(.rect(cornerRadius: Constants.cornerRadius))
         .onGeometryChange(for: CGFloat.self) { geometry in
             geometry.size.width
         } action: { newWidth in
@@ -36,43 +43,12 @@ struct TheMovieDbImage: View {
             .map(\.images)
             .result
             .flatMap { images in
-                let requiredPixelWidth = containerWidth * displayScale
-
-                guard let imageSize = Self.bestImageSize(
-                    from: images.posterSizes,
-                    requiredPixelWidth: requiredPixelWidth
-                ) else {
-                    return nil
-                }
-
-                return URL(string: images.secureBaseUrl)?
-                    .appending(path: imageSize)
-                    .appending(path: path)
+                images.imageURL(
+                    for: imageKind,
+                    requiredImageWidthInPixels: containerWidth * displayScale
+                )?
+                .appending(path: path)
             }
-    }
-
-    static func bestImageSize(
-        from availableSizes: [String],
-        requiredPixelWidth: CGFloat
-    ) -> String? {
-        let fixedWidthSizes = availableSizes.compactMap { size -> (name: String, width: CGFloat)? in
-            guard size.first == "w",
-                  let width = Double(size.dropFirst()),
-                  width > 0 else {
-                return nil
-            }
-
-            return (size, CGFloat(width))
-        }
-        .sorted { $0.width < $1.width }
-
-        if let bestFit = fixedWidthSizes.first(where: { $0.width >= requiredPixelWidth }) {
-            return bestFit.name
-        }
-
-        return availableSizes.contains("original")
-            ? "original"
-            : fixedWidthSizes.last?.name
     }
 }
 
@@ -80,13 +56,19 @@ struct TheMovieDbImage: View {
     "small",
     traits: .fixedLayout(width: 150, height: 200)
 ) {
-    TheMovieDbImage(path: "/6VY1ZKgpsc8CfGsQcCGiYEgHdH0.jpg")
-        .border(.red)
+    TheMovieDbImage(
+        imageKind: .poster,
+        path: "/6VY1ZKgpsc8CfGsQcCGiYEgHdH0.jpg"
+    )
+    .border(.red)
 }
 
 #Preview(
     "large",
     traits: .fixedLayout(width: 350, height: 500)
 ) {
-    TheMovieDbImage(path: "/6VY1ZKgpsc8CfGsQcCGiYEgHdH0.jpg")
+    TheMovieDbImage(
+        imageKind: .poster,
+        path: "/6VY1ZKgpsc8CfGsQcCGiYEgHdH0.jpg"
+    )
 }

@@ -5,11 +5,13 @@ struct MovieTile: View {
 
     var body: some View {
         VStack {
-            TheMovieDbImage(path: movie.posterPath)
+            TheMovieDbImage(imageKind: .poster, path: movie.posterPath)
 
             Text(movie.title)
                 .foregroundStyle(Color.ds_textForeground)
-                .font(.subheadline)
+                .font(Font.ds_headline)
+                .lineLimit(1)
+                .truncationMode(.middle)
         }
     }
 }

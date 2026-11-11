@@ -1,10 +1,11 @@
 import SwiftUI
 
 enum DesignSystem {
-    static var darkThemeColors: Colors {
+    static var defaultColors: Colors {
         Colors(
-           background: Color(hex: "#1F1F29"),
-           textForeground: Color(hex: "#FFFFFF")
+            background: Color(.Colors.background),
+            grey: Color(.Colors.grey),
+            textForeground: Color(.Colors.textForeground)
         )
     }
 
@@ -12,6 +13,12 @@ enum DesignSystem {
         Spacing(
             small: 8,
             medium: 12
+        )
+    }
+
+    static var defaultTypography: Typography {
+        Typography(
+            headline: .headline
         )
     }
 }
