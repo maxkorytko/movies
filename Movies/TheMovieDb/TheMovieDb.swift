@@ -13,9 +13,9 @@ struct TheMovieDb {
         self.apiClient = TheMovieDbApi.Client(network: network)
     }
 
-    private func callApi<T: Decodable>(endpoint: TheMovieDbApi.Endpoint) async throws -> T {
+    private func makeApiRequest<T: Decodable>(resource: TheMovieDbApi.Resource) async throws -> T {
         try await apiClient.request(
-            endpoint: endpoint,
+            resource: resource,
             authTokenProvider: authTokenProvider
         )
     }
@@ -23,6 +23,6 @@ struct TheMovieDb {
 
 extension TheMovieDb: MovieRepository {
     func fetchNowPlayingMovies() async throws -> Page<Movie> {
-        try await callApi(endpoint: .nowPlayingMovies)
+        try await makeApiRequest(resource: .nowPlayingMovies)
     }
 }
