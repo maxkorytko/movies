@@ -1,31 +1,42 @@
+import Foundation
+
 extension TheMovieDbApi {
-    enum Endpoint: CaseIterable {
+    enum Resource {
         case nowPlayingMovies
-
-        private var descriptor: EndpointDescriptor {
-            switch self {
-            case .nowPlayingMovies: .nowPlayingMovies
-            }
-        }
-
-        var apiVersion: Version { descriptor.apiVersion }
-        var httpMethod: HttpMethod { descriptor.httpMethod }
-        var path: String { descriptor.path }
-    }
-
-    fileprivate struct EndpointDescriptor {
-        let apiVersion: Version
-        let httpMethod: HttpMethod
-        let path: String
-
-        init(apiVersion: Version, httpMethod: HttpMethod, path: String) {
-            self.httpMethod = httpMethod
-            self.path = path
-            self.apiVersion = apiVersion
-        }
+        case movieDetails(movieId: String)
     }
 }
 
-extension TheMovieDbApi.EndpointDescriptor {
-    static let nowPlayingMovies = Self(apiVersion: .v3, httpMethod: .get, path: "movie/now_playing")
+extension TheMovieDbApi {
+    final class Endpoint {
+        let apiVersion: Version
+        let httpMethod: HttpMethod
+        let path: String
+        let resource: Resource
+
+        lazy var url: URL? = makeURL()
+
+        init(for resource: Resource) {
+            let apiVersion = TheMovieDbApi.Version.v3
+            let httpMethod = HttpMethod.get
+
+            switch resource {
+            case .nowPlayingMovies:
+                self.path = "movie/now_playing"
+            case .movieDetails(let movieId):
+                self.path = "movie/\(movieId)"
+            }
+
+            self.apiVersion = apiVersion
+            self.httpMethod = httpMethod
+            self.resource = resource
+        }
+
+        private func makeURL() -> URL? {
+            var components = URLComponents(string: TheMovieDb.Constants.baseUrl)
+            components?.path = "/\(apiVersion.rawValue)/\(path)"
+
+            return components?.url
+        }
+    }
 }

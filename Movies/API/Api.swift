@@ -21,8 +21,6 @@ enum TheMovieDbApi {
         case decodingFailed(underlying: Error)
         case httpError(statusCode: Int, data: Data?)
         case invalidAuthToken
-        case invalidEndpoint
-        case invalidEndpointMethod
         case invalidEndpointURL
         case invalidHost
         case invalidResponse
@@ -55,28 +53,30 @@ enum TheMovieDbApi {
             self.network = network
         }
 
-        func request<T: Decodable>(endpoint: Endpoint, authTokenProvider: AuthTokenProvider) async throws(ApiError) -> T {
+        func request<T: Decodable>(
+            resource: Resource,
+            authTokenProvider: AuthTokenProvider
+        ) async throws(ApiError) -> T {
             guard let authToken = authTokenProvider.authToken else {
                 throw .invalidAuthToken
             }
 
-            let request = try RequestBuilder()
-                .authToken(authToken)
-                .endpoint(endpoint)
-                .build()
-
             do {
-                log(request)
+                let request = Request(
+                    authToken: authToken,
+                    endpoint: Endpoint(for: resource)
+                )
 
                 let (data, response) = try await network.data(for: request)
+
                 try handleResponse(response, data: data)
+
                 do {
                     return try jsonDecoder.decode(T.self, from: data)
                 } catch {
                     throw ApiError.decodingFailed(underlying: error)
                 }
             } catch {
-                log(request, .error, message: "\(error)")
                 if let apiError = error as? ApiError { throw apiError }
                 throw ApiError.requestFailed(underlying: error)
             }
@@ -110,58 +110,9 @@ enum TheMovieDbApi {
     }
 }
 
-fileprivate extension TheMovieDbApi {
-    final class RequestBuilder {
-        private(set) var authToken: AuthToken?
-        private(set) var endpoint: Endpoint?
-
-        func authToken(_ authToken: AuthToken) -> Self {
-            self.authToken = authToken
-            return self
-        }
-
-        func endpoint(_ endpoint: Endpoint) -> Self {
-            self.endpoint = endpoint
-            return self
-        }
-
-        func build() throws(ApiError) -> URLRequest {
-            try URLRequest(apiRequestBuilder: self)
-        }
-    }
-}
-
-fileprivate extension URLRequest {
-    init(apiRequestBuilder: TheMovieDbApi.RequestBuilder) throws(TheMovieDbApi.ApiError) {
-        guard let url = try Self.buildRequestURL(apiRequestBuilder) else {
-            throw .invalidEndpointURL
-        }
-
-        self.init(url: url)
-
-        self.httpMethod = switch apiRequestBuilder.endpoint?.httpMethod {
-        case .get: "GET"
-        case nil: throw .invalidEndpointMethod
-        }
-
-        switch apiRequestBuilder.authToken {
-        case .bearer(let token):
-            setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        case nil:
-            throw .invalidAuthToken
-        }
-
-        setValue("application/json", forHTTPHeaderField: "Accept")
-    }
-
-    private static func buildRequestURL(_ apiRequestBuilder: TheMovieDbApi.RequestBuilder) throws(TheMovieDbApi.ApiError) -> URL? {
-        guard let endpoint = apiRequestBuilder.endpoint else {
-            throw .invalidEndpoint
-        }
-
-        var components = URLComponents(string: TheMovieDb.Constants.baseUrl)
-        components?.path = "/\(endpoint.apiVersion.rawValue)/\(endpoint.path)"
-
-        return components?.url
+extension TheMovieDbApi {
+    struct Request {
+        let authToken: AuthToken
+        let endpoint: Endpoint
     }
 }

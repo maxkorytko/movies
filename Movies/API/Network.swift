@@ -1,7 +1,5 @@
 import Foundation
 
 protocol Network {
-    func data(for request: URLRequest) async throws -> (Data, URLResponse)
+    func data(for request: TheMovieDbApi.Request) async throws -> (Data, URLResponse)
 }
-
-extension URLSession: Network {}

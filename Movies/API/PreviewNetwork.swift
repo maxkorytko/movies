@@ -2,39 +2,33 @@ import Foundation
 
 struct PreviewNetwork: Network {
     enum Error: Swift.Error {
-        case invalidRequest
         case missingResponse
         case missingResource
     }
 
     // MARK: - Network
 
-    func data(for request: URLRequest) async throws -> (Data, URLResponse) {
-        guard let requestURL = request.url else {
-            throw Error.invalidRequest
-        }
+    func data(for request: TheMovieDbApi.Request) async throws -> (Data, URLResponse) {
+        let data = try Self.data(for: request)
 
-        let data = try Self.data(for: requestURL)
-
-        guard let response = HTTPURLResponse(
-            url: requestURL,
-            statusCode: 200,
-            httpVersion: nil,
-            headerFields: ["Content-Type": "application/json"]
-        ) else {
+        guard let response = request.endpoint.url.map({
+            HTTPURLResponse(
+                url: $0,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: ["Content-Type": "application/json"]
+            )
+        }) else {
             throw Error.missingResponse
         }
 
-        return (data, response)
+        return (data, response!)
     }
 
-    private static func data(for url: URL) throws -> Data {
-        let data = try TheMovieDbApi.Endpoint.allCases.first { endpoint in
-            url.path().contains(endpoint.path)
+    private static func data(for request: TheMovieDbApi.Request) throws -> Data {
+        let data = try dataURL(for: request).map {
+            try Data(contentsOf: $0)
         }
-        .map(\.path)
-        .flatMap(resourceURL)
-        .map { resourceURL in try Data(contentsOf: resourceURL) }
 
         if let data {
             return data
@@ -43,10 +37,12 @@ struct PreviewNetwork: Network {
         throw Error.missingResource
     }
 
-    nonisolated private static func resourceURL(path: String) -> URL? {
-        Bundle.main.url(
-            forResource: path.replacingOccurrences(of: "/", with: "."),
-            withExtension: "json"
-        )
+    nonisolated private static func dataURL(for request: TheMovieDbApi.Request) -> URL? {
+        let resourceName = switch request.endpoint.resource {
+        case .nowPlayingMovies: "movie.now_playing"
+        case .movieDetails: "movie.details"
+        }
+
+        return Bundle.main.url(forResource: resourceName, withExtension: "json")
     }
 }
