@@ -22,7 +22,7 @@ struct TheMovieDb {
 }
 
 extension TheMovieDb: MovieRepository {
-    func fetchNowPlayingMovies() async throws -> Page<Movie> {
+    func fetchNowPlayingMovies() async throws -> Page<NowPlayingMovie> {
         try await makeApiRequest(resource: .nowPlayingMovies)
     }
 }

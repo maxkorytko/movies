@@ -1,3 +1,3 @@
 protocol MovieRepository {
-    func fetchNowPlayingMovies() async throws -> Page<Movie>
+    func fetchNowPlayingMovies() async throws -> Page<NowPlayingMovie>
 }

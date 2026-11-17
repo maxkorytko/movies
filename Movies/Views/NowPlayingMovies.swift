@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MovieCollectionView: View {
+struct NowPlayingMovies: View {
     @State private var viewModel: ViewModel = .init()
 
     var body: some View {
@@ -41,7 +41,7 @@ fileprivate struct MovieGridView: View {
         static let columnsVerticalSpacing: CGFloat = .ds_medium
     }
 
-    fileprivate let movies: [Movie]
+    fileprivate let movies: [NowPlayingMovie]
 
     var body: some View {
         GeometryReader { geometry in
@@ -56,7 +56,7 @@ fileprivate struct MovieGridView: View {
                     spacing: Constants.columnsVerticalSpacing
                 ) {
                     ForEach(movies) { movie in
-                        MovieTile(movie: movie)
+                        MovieTile(movie)
                     }
                 }
                 .padding()
@@ -80,13 +80,13 @@ fileprivate struct MovieGridView: View {
     }
 }
 
-extension MovieCollectionView {
+extension NowPlayingMovies {
     @MainActor
     @Observable
     final class ViewModel {
         private let movieRepository: any MovieRepository
 
-        private(set) var content: Loadable<[Movie]> = .loading
+        private(set) var content: Loadable<[NowPlayingMovie]> = .loading
 
         convenience init() {
             self.init(movieRepository: inject())
@@ -108,5 +108,5 @@ extension MovieCollectionView {
 }
 
 #Preview {
-    MovieCollectionView()
+    NowPlayingMovies()
 }
