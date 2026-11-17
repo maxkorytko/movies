@@ -38,11 +38,9 @@ struct PreviewNetwork: Network {
     }
 
     nonisolated private static func dataURL(for request: TheMovieDbApi.Request) -> URL? {
-        let resourceName = switch request.endpoint.resource {
-        case .nowPlayingMovies: "movie.now_playing"
-        case .movieDetails: "movie.details"
-        }
-
-        return Bundle.main.url(forResource: resourceName, withExtension: "json")
+        Bundle.main.url(
+            forResource: request.endpoint.previewResourceName,
+            withExtension: "json"
+        )
     }
 }

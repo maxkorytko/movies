@@ -16,8 +16,12 @@ func log(_ level: LogLevel, _ message: String) {
     }
 }
 
-func log(_ request: URLRequest, _ level: LogLevel = .info, message: String? = nil) {
-    log(level, "[⚡️Request] \(request.httpMethod ?? "?") \(request)")
+func log(
+    _ request: TheMovieDbApi.Request,
+    _ level: LogLevel = .info,
+    message: String? = nil
+) {
+    log(level, "[⚡️Request] \(request.endpoint.httpMethod) \(request.endpoint.url?.absoluteString ?? "")")
 
     if let message {
         log(level, message)

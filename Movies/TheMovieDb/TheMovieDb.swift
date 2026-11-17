@@ -25,4 +25,8 @@ extension TheMovieDb: MovieRepository {
     func fetchNowPlayingMovies() async throws -> Page<NowPlayingMovie> {
         try await makeApiRequest(resource: .nowPlayingMovies)
     }
+
+    func fetchMovie(movieId: String) async throws -> Movie {
+        try await makeApiRequest(resource: .movie(movieId))
+    }
 }

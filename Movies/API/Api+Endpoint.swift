@@ -3,7 +3,7 @@ import Foundation
 extension TheMovieDbApi {
     enum Resource {
         case nowPlayingMovies
-        case movieDetails(movieId: String)
+        case movie(String)
     }
 }
 
@@ -12,6 +12,7 @@ extension TheMovieDbApi {
         let apiVersion: Version
         let httpMethod: HttpMethod
         let path: String
+        let previewResourceName: String?
         let resource: Resource
 
         lazy var url: URL? = makeURL()
@@ -23,8 +24,10 @@ extension TheMovieDbApi {
             switch resource {
             case .nowPlayingMovies:
                 self.path = "movie/now_playing"
-            case .movieDetails(let movieId):
+                self.previewResourceName = "movie.now_playing"
+            case .movie(let movieId):
                 self.path = "movie/\(movieId)"
+                self.previewResourceName = "movie_\(movieId)"
             }
 
             self.apiVersion = apiVersion

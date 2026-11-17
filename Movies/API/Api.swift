@@ -67,6 +67,8 @@ enum TheMovieDbApi {
                     endpoint: Endpoint(for: resource)
                 )
 
+                log(request)
+
                 let (data, response) = try await network.data(for: request)
 
                 try handleResponse(response, data: data)
